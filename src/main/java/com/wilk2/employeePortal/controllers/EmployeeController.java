@@ -33,7 +33,8 @@ public class EmployeeController {
 
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
-            existingEmployee.setEmail(employee.getEmail());
+            //existingEmployee.setEmail(employee.getEmail());
+            existingEmployee.setEmployeeID(employee.getEmployeeID());
 
             return employeeRepository.save(existingEmployee);
         });
