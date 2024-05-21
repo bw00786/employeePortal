@@ -22,7 +22,7 @@ public class EmployeeUpdateController {
     public CompletableFuture<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         return CompletableFuture.supplyAsync(() -> {
             Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Employee not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
 
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
