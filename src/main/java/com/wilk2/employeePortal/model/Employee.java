@@ -27,4 +27,7 @@ public class Employee {
    @Column(name = "employeeID")
     private String employeeID;
 
+    @Column(name = "employeeStartDate")
+    private String employeeIDStartDate;
+
 }

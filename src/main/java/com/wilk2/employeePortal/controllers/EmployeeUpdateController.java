@@ -28,6 +28,7 @@ public class EmployeeUpdateController {
             existingEmployee.setLastName(employee.getLastName());
             //existingEmployee.setEmail(employee.getEmail());
             existingEmployee.setEmployeeID(employee.getEmployeeID());
+            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate());
 
             return employeeRepository.save(existingEmployee);
         });
