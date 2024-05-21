@@ -28,6 +28,7 @@ public class EmployeeUpdateController {
             existingEmployee.setLastName(employee.getLastName());
             //existingEmployee.setEmail(employee.getEmail());
             existingEmployee.setEmployeeID(employee.getEmployeeID());
+            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate());
 
             return employeeRepository.save(existingEmployee);
         });
@@ -44,7 +45,7 @@ public class EmployeeUpdateController {
     @GetMapping("/{id}")
     public CompletableFuture<Employee> getEmployeeById(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Employee not found with id: " + id)));
+            .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
     }
 
 
