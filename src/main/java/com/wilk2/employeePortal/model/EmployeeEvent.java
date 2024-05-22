@@ -15,6 +15,9 @@ public class EmployeeEvent {
     private String employeeID;
     private String employeeStartDate;
 
+    private String asdklakdmlsa_dasdsada;;
+    private String dasdasds_JDFBND123;
+
 
 }
 
