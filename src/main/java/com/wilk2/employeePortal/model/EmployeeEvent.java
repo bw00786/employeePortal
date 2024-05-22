@@ -14,12 +14,8 @@ public class EmployeeEvent {
     private String email;
     private String employeeID;
     private String employeeStartDate;
-   private String watch_men;
-   private String watcvh_dasdas_dadasda;
 
-   String sdfsdfsdfsdfsd() {
-       return null;
-   }
+
 }
 
 
