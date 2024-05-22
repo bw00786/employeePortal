@@ -18,4 +18,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     // Find all employees
     @NotNull
     List<Employee> findAll();
+    List<Employee> findAll();
 }
