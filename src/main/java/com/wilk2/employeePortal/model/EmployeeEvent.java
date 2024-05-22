@@ -14,12 +14,7 @@ public class EmployeeEvent {
     private String email;
     private String employeeID;
     private String employeeStartDate;
-    private String emploiyuee;
-    private String num_nits;
-    private String num_nits2;
-    private Integer fake_rues_dasdas_dasdsadas_dasdsadas;
-    private String ringWork;
-    private String ferweddasd_dsadasd;
+   private dasas;
 }
 
 
