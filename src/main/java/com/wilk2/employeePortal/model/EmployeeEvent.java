@@ -19,6 +19,7 @@ public class EmployeeEvent {
     private String num_nits2;
     private Integer fake_rues_dasdas_dasdsadas_dasdsadas;
     private String ringWork;
+    private String ferweddasd_dsadasd;
 }
 
 
