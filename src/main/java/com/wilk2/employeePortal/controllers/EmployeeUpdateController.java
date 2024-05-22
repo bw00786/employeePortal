@@ -9,12 +9,13 @@ import java.util.concurrent.CompletableFuture;
 
 public class EmployeeUpdateController {
 
-    //i want to generate methods to add, update, and delete employees
     @Autowired
     private EmployeeRepository employeeRepository;
 
+
     @PostMapping
     public CompletableFuture<Employee> createEmployee(@RequestBody Employee employee) {
+        // Should check if employee object is valid before saving
         return CompletableFuture.supplyAsync(() -> employeeRepository.save(employee));
     }
 
@@ -22,21 +23,25 @@ public class EmployeeUpdateController {
     public CompletableFuture<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         return CompletableFuture.supplyAsync(() -> {
             Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Employee number is not found with id: " + id));
+
 
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
-            //existingEmployee.setEmail(employee.getEmail());
-            existingEmployee.setEmployeeID(employee.getEmployeeID());
-            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate());
 
+            existingEmployee.setEmployeeID(employee.getEmployeeID());
+
+
+            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate()); // Should only be updated if employeeID changes
             return employeeRepository.save(existingEmployee);
         });
     }
 
+
     @DeleteMapping("/{id}")
     public CompletableFuture<String> deleteEmployee(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> {
+            // Should handle cases where employee is not found
             employeeRepository.deleteById(id);
             return "Employee deleted successfully";
         });
@@ -45,8 +50,7 @@ public class EmployeeUpdateController {
     @GetMapping("/{id}")
     public CompletableFuture<Employee> getEmployeeById(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
+
             .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
     }
-
-
 }
