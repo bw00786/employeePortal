@@ -14,6 +14,11 @@ public class EmployeeEvent {
     private String email;
     private String employeeID;
     private String employeeStartDate;
+    private String abc_456;
+
+    String abddfd_dada() {
+        return null;
+    }
 
 
 }
