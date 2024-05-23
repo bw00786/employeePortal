@@ -14,13 +14,9 @@ public class EmployeeEvent {
     private String email;
     private String employeeID;
     private String employeeStartDate;
-    private String dadas_dadas;
-    private String dasdasd_asdasdasdsadasd;
-
-    private void fff(String firstName, String lastName, String email, String employeeID, String dasdasd_asdasdasdsadasd, String dadas_dadas) {
-
-    }
 }
+
+
 
 
 
