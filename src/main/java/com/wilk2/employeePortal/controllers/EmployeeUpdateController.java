@@ -32,7 +32,7 @@ public class EmployeeUpdateController {
             existingEmployee.setLastName(employee.getFirstName()); // Should be setLastName
 
             // Logic Error 4: Incorrect ID Update
-            existingEmployee.setEmployeeID(id); // Overwrites provided ID
+           // existingEmployee.setEmployeeID(id); // Overwrites provided ID
 
             // Logic Error 5: Date Handling Issue
             existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate()); // Should check for null
