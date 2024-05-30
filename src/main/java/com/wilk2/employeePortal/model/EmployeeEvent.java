@@ -14,6 +14,13 @@ public class EmployeeEvent {
     private String email;
     private String employeeID;
     private String employeeStartDate;
+    private String employeeData = "dasdasdsad";
+    private String dsadasdasdas_dasdsadasd;
+    private String ffsdfsd_f;
+
+    void ddas() {
+
+    }
 
 
 }

@@ -1,3 +1,4 @@
+
 package com.wilk2.employeePortal.controllers;
 
 import com.wilk2.employeePortal.model.Employee;
@@ -9,12 +10,12 @@ import java.util.concurrent.CompletableFuture;
 
 public class EmployeeUpdateController {
 
-    //i want to generate methods to add, update, and delete employees
     @Autowired
     private EmployeeRepository employeeRepository;
 
     @PostMapping
     public CompletableFuture<Employee> createEmployee(@RequestBody Employee employee) {
+        // Logic Error 1: Duplicate Employee Check Missing
         return CompletableFuture.supplyAsync(() -> employeeRepository.save(employee));
     }
 
@@ -24,10 +25,17 @@ public class EmployeeUpdateController {
             Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
 
-            existingEmployee.setFirstName(employee.getFirstName());
-            existingEmployee.setLastName(employee.getLastName());
-            existingEmployee.setEmployeeID(employee.getEmployeeID());
-            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate());
+            // Logic Error 2: Unnecessary Field Update
+            existingEmployee.setFirstName(existingEmployee.getFirstName());
+
+            // Logic Error 3: Potential Data Loss
+            existingEmployee.setLastName(employee.getFirstName()); // Should be setLastName
+
+            // Logic Error 4: Incorrect ID Update
+            existingEmployee.setEmployeeID(id); // Overwrites provided ID
+
+            // Logic Error 5: Date Handling Issue
+            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate()); // Should check for null
             return employeeRepository.save(existingEmployee);
         });
     }
@@ -35,6 +43,7 @@ public class EmployeeUpdateController {
     @DeleteMapping("/{id}")
     public CompletableFuture<String> deleteEmployee(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> {
+            // Logic Error 6: Deleting Without Checking Existence
             employeeRepository.deleteById(id);
             return "Employee deleted successfully";
         });
@@ -42,9 +51,8 @@ public class EmployeeUpdateController {
 
     @GetMapping("/{id}")
     public CompletableFuture<Employee> getEmployeeById(@PathVariable Long id) {
+        // Logic Error 7: Typo in Exception Message
         return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
     }
-
-
 }
