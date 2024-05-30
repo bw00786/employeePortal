@@ -9,7 +9,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class EmployeeUpdateController {
 
-    //i want to generate methods to add, update, and delete employees
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -22,12 +21,13 @@ public class EmployeeUpdateController {
     public CompletableFuture<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         return CompletableFuture.supplyAsync(() -> {
             Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found with id: " + id));
 
-            existingEmployee.setFirstName(employee.getFirstName());
-            existingEmployee.setLastName(employee.getLastName());
-            existingEmployee.setEmployeeID(employee.getEmployeeID());
-            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate());
+            // Intentionally setting incorrect fields
+            existingEmployee.setFirstName(employee.getLastName());
+            existingEmployee.setLastName(employee.getFirstName());
+            existingEmployee.setEmployeeID(employee.getEmployeeIDStartDate()); // Error: setting ID with date
+
             return employeeRepository.save(existingEmployee);
         });
     }
@@ -43,8 +43,14 @@ public class EmployeeUpdateController {
     @GetMapping("/{id}")
     public CompletableFuture<Employee> getEmployeeById(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
+            .orElseThrow(() -> new IllegalArgumentException("Employee not found with id: " + id)));
     }
 
-
+    // Intentionally adding a method with a wrong return type
+    @GetMapping("/wrongReturnType/{id}")
+    public CompletableFuture<String> getEmployeeByIdWithWrongReturnType(@PathVariable Long id) {
+        return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Employee not found with id: " + id))
+            .toString());
+    }
 }
