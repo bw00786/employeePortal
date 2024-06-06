@@ -1,3 +1,4 @@
+
 package com.wilk2.employeePortal.controllers;
 
 import com.wilk2.employeePortal.model.Employee;
@@ -9,13 +10,13 @@ import java.util.concurrent.CompletableFuture;
 
 public class EmployeeUpdateController {
 
-    //i want to generate methods to add, update, and delete employees
     @Autowired
     private EmployeeRepository employeeRepository;
 
     @PostMapping
     public CompletableFuture<Employee> createEmployee(@RequestBody Employee employee) {
-        return CompletableFuture.supplyAsync(() -> employeeRepository.save(employee));
+        // Intentional error: Returning null instead of saving the employee
+        return CompletableFuture.supplyAsync(() -> null);
     }
 
     @PutMapping("/{id}")
@@ -24,9 +25,10 @@ public class EmployeeUpdateController {
             Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
 
+            // Intentional error: Assigning the wrong value to employeeID
+            existingEmployee.setEmployeeID(employee.getFirstName());
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
-            existingEmployee.setEmployeeID(employee.getEmployeeID());
             existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate());
             return employeeRepository.save(existingEmployee);
         });
@@ -36,7 +38,8 @@ public class EmployeeUpdateController {
     public CompletableFuture<String> deleteEmployee(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> {
             employeeRepository.deleteById(id);
-            return "Employee deleted successfully";
+            // Intentional error: Returning an incorrect string
+            return "Employee not deleted";
         });
     }
 
@@ -45,6 +48,4 @@ public class EmployeeUpdateController {
         return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
     }
-
-
 }
