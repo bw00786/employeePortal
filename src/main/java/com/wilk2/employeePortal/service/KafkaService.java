@@ -12,6 +12,8 @@ public class KafkaService {
     @Value("${spring.kafka.consumer.group-id}")
     private String kafkaConsumerGroupId;
 
+    private String dasdasd_sadasda;
+
     // Use the properties in your Kafka-related logic
     // ...
 }

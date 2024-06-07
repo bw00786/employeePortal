@@ -14,6 +14,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     // Add custom methods for querying employee information based on last name, employee id, etc.
 // Find employee by ID
    Employee findById(long id);
+   Employee findByEmployeeId(String emp);
 
     // Find all employees
     @NotNull
