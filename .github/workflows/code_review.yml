@@ -27,3 +27,4 @@ jobs:
         run: python .github/scripts/code_review.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUGGINGFACE_HUB_TOKEN: ${{ secrets.HUGGINGFACE_HUB_TOKEN }}
