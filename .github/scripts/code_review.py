@@ -3,6 +3,7 @@ import requests
 import subprocess
 import sys
 import logging
+import sentencepiece
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from huggingface_hub import login
@@ -16,15 +17,7 @@ def install_sentencepiece():
     subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
     logger.info("sentencepiece installed successfully")
 
-# Ensure sentencepiece is installed
-try:
-    import sentencepiece
-    logger.info("sentencepiece is already installed")
-except ImportError:
-    install_sentencepiece()
-    import importlib
-    importlib.invalidate_caches()
-    import sentencepiece
+
 
 # Load tokens from environment variables
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
