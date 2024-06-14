@@ -11,13 +11,17 @@ from huggingface_hub import login
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def install_sentencepiece():
+    logger.info("Installing sentencepiece")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
+    import sentencepiece
+
 # Ensure sentencepiece is installed
 try:
     import sentencepiece
     logger.info("sentencepiece is already installed")
 except ImportError:
-    logger.info("Installing sentencepiece")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
+    install_sentencepiece()
     import sentencepiece
 
 # Load tokens from environment variables
@@ -40,8 +44,13 @@ except ValueError as e:
     logger.error(f"Error loading tokenizer: {e}")
     logger.info("Retrying with LlamaTokenizer")
     from transformers import LlamaTokenizer
-    tokenizer = LlamaTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
-    model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
+    try:
+        tokenizer = LlamaTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
+        model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
+    except ImportError:
+        install_sentencepiece()
+        tokenizer = LlamaTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
+        model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
 
 def get_pr_files(repo, pr_number):
     url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}/files"
