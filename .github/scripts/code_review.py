@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def install_sentencepiece():
     logger.info("Installing sentencepiece")
     subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
-    import sentencepiece
+    logger.info("sentencepiece installed successfully")
 
 # Ensure sentencepiece is installed
 try:
@@ -22,6 +22,8 @@ try:
     logger.info("sentencepiece is already installed")
 except ImportError:
     install_sentencepiece()
+    import importlib
+    importlib.invalidate_caches()
     import sentencepiece
 
 # Load tokens from environment variables
@@ -49,6 +51,9 @@ except ValueError as e:
         model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
     except ImportError:
         install_sentencepiece()
+        import importlib
+        importlib.invalidate_caches()
+        import sentencepiece
         tokenizer = LlamaTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
         model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
 
@@ -102,3 +107,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
