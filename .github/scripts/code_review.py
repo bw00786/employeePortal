@@ -38,10 +38,9 @@ try:
     model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
 except ValueError as e:
     logger.error(f"Error loading tokenizer: {e}")
-    logger.info("Retrying to install sentencepiece and loading tokenizer again")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
-    import sentencepiece
-    tokenizer = AutoTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
+    logger.info("Retrying with LlamaTokenizer")
+    from transformers import LlamaTokenizer
+    tokenizer = LlamaTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
     model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
 
 def get_pr_files(repo, pr_number):
