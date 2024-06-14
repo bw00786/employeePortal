@@ -2,7 +2,7 @@ import os
 import requests
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
-rom huggingface_hub import login
+from huggingface_hub import login
 
 
 
