@@ -4,14 +4,17 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from huggingface_hub import login
 
-
-
+# Load tokens from environment variables
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 HUGGINGFACE_HUB_TOKEN = os.getenv('HUGGINGFACE_HUB_TOKEN')
 MISTRAL_MODEL_NAME = 'mistralai/mistral-7b-instruct-v0.3'
 
-# Hugging Face Login (use either environment variable or direct token)
-login(token=os.environ.get('HUGGINGFACE_HUB_TOKEN', HUGGINGFACE_HUB_TOKEN))
+# Ensure the Hugging Face token is available
+if not HUGGINGFACE_HUB_TOKEN:
+    raise ValueError("HUGGINGFACE_HUB_TOKEN environment variable not set")
+
+# Hugging Face Login
+login(token=HUGGINGFACE_HUB_TOKEN)
 
 # Load the Mistral model and tokenizer
 tokenizer = AutoTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
