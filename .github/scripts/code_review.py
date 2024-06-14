@@ -1,6 +1,7 @@
 import os
 import requests
 import subprocess
+import sys
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from huggingface_hub import login
