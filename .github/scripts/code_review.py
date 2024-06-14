@@ -2,15 +2,23 @@ import os
 import requests
 import subprocess
 import sys
+import logging
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from huggingface_hub import login
 
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Ensure sentencepiece is installed
 try:
     import sentencepiece
+    logger.info("sentencepiece is already installed")
 except ImportError:
+    logger.info("Installing sentencepiece")
     subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
+    import sentencepiece
 
 # Load tokens from environment variables
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
@@ -25,8 +33,16 @@ if not HUGGINGFACE_HUB_TOKEN:
 login(token=HUGGINGFACE_HUB_TOKEN)
 
 # Load the Mistral model and tokenizer
-tokenizer = AutoTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
-model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
+try:
+    tokenizer = AutoTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
+    model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
+except ValueError as e:
+    logger.error(f"Error loading tokenizer: {e}")
+    logger.info("Retrying to install sentencepiece and loading tokenizer again")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
+    import sentencepiece
+    tokenizer = AutoTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
+    model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
 
 def get_pr_files(repo, pr_number):
     url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}/files"
