@@ -22,7 +22,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install transformers torch
-          pip install sentencepiece
+          pip install sentencepiece protobuf
 
       - name: Run code review with Mistral 7B
         run: python .github/scripts/code_review.py

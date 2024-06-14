@@ -3,6 +3,7 @@ import requests
 import subprocess
 import sys
 import logging
+import protobuf
 import sentencepiece
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
