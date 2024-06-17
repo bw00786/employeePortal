@@ -1,4 +1,5 @@
 import os
+import protobuf
 import requests
 import subprocess
 import sys
@@ -6,7 +7,6 @@ import logging
 import sentencepiece
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
-import protobuf
 from huggingface_hub import login
 
 # Set up logging
