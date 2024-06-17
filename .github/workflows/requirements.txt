@@ -1,0 +1,6 @@
+requests
+sentencepiece
+transformers
+torch
+protobuf
+huggingface-hub
