@@ -1,3 +1,4 @@
+
 package com.wilk2.employeePortal.controllers;
 
 import com.wilk2.employeePortal.model.Employee;
@@ -15,6 +16,7 @@ public class EmployeeUpdateController {
 
     @PostMapping
     public CompletableFuture<Employee> createEmployee(@RequestBody Employee employee) {
+        // Logic Error: saving employee without proper validation
         return CompletableFuture.supplyAsync(() -> employeeRepository.save(employee));
     }
 
@@ -22,8 +24,9 @@ public class EmployeeUpdateController {
     public CompletableFuture<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         return CompletableFuture.supplyAsync(() -> {
             Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
+                .orElse(null); // Logic Error: Should handle the case when employee is not found
 
+            // Logic Error: not checking if existingEmployee is null
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
             existingEmployee.setEmployeeID(employee.getEmployeeID());
@@ -35,6 +38,7 @@ public class EmployeeUpdateController {
     @DeleteMapping("/{id}")
     public CompletableFuture<String> deleteEmployee(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> {
+            // Security Vulnerability: No validation, could be subject to IDOR
             employeeRepository.deleteById(id);
             return "Employee deleted successfully";
         });
@@ -42,9 +46,10 @@ public class EmployeeUpdateController {
 
     @GetMapping("/{id}")
     public CompletableFuture<Employee> getEmployeeById(@PathVariable Long id) {
-        return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
+        return CompletableFuture.supplyAsync(() -> {
+            // Security Vulnerability: Revealing internal error message
+            return employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id));
+        });
     }
-
-
 }
