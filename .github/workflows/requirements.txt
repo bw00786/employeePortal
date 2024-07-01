@@ -1,0 +1,11 @@
+requests
+langchain-huggingface
+huggingface_hub
+accelerate
+bitsandbytes
+langchain
+sentencepiece
+transformers
+torch
+protobuf
+
