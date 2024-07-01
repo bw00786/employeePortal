@@ -1,6 +1,10 @@
 requests
+langchain-hugggingface
+huggingface_hub
 sentencepiece
 transformers
 torch
 protobuf
-huggingface-hub
+accelerate
+bitsandbytes
+langchain
