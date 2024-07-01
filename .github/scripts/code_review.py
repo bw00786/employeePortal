@@ -1,29 +1,19 @@
 import os
 import requests
-import subprocess
-import sys
 import logging
-import sentencepiece
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import torch
-from google.protobuf.message import Message
+from langchain_huggingface import HuggingFaceEndpoint
+from langchain_core.prompts import PromptTemplate
+from langchain.chains import LLMChain
 from huggingface_hub import login
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def install_sentencepiece():
-    logger.info("Installing sentencepiece")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "sentencepiece"])
-    logger.info("sentencepiece installed successfully")
-
-
-
 # Load tokens from environment variables
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 HUGGINGFACE_HUB_TOKEN = os.getenv('HUGGINGFACE_HUB_TOKEN')
-MISTRAL_MODEL_NAME = 'mistralai/mistral-7b-instruct-v0.3'
+MISTRAL_MODEL_NAME = 'mistralai/Mistral-7B-Instruct-v0.3'
 
 # Ensure the Hugging Face token is available
 if not HUGGINGFACE_HUB_TOKEN:
@@ -32,24 +22,15 @@ if not HUGGINGFACE_HUB_TOKEN:
 # Hugging Face Login
 login(token=HUGGINGFACE_HUB_TOKEN)
 
-# Load the Mistral model and tokenizer
-try:
-    tokenizer = AutoTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
-    model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
-except ValueError as e:
-    logger.error(f"Error loading tokenizer: {e}")
-    logger.info("Retrying with LlamaTokenizer")
-    from transformers import LlamaTokenizer
-    try:
-        tokenizer = LlamaTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
-        model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
-    except ImportError:
-        install_sentencepiece()
-        import importlib
-        importlib.invalidate_caches()
-        import sentencepiece
-        tokenizer = LlamaTokenizer.from_pretrained(MISTRAL_MODEL_NAME)
-        model = AutoModelForCausalLM.from_pretrained(MISTRAL_MODEL_NAME)
+# Initialize the Hugging Face endpoint
+llm = HuggingFaceEndpoint(repo_id=MISTRAL_MODEL_NAME, max_length=750, temperature=0.7, token=HUGGINGFACE_HUB_TOKEN)
+
+# Define the prompt template
+template = """Review the following code changes in {filename}:
+{patch}
+Provide any suggestions or improvements on the basis of security, logic errors."""
+prompt = PromptTemplate(template=template, input_variables=["filename", "patch"])
+llm_chain = LLMChain(llm=llm, prompt=prompt)
 
 def get_pr_files(repo, pr_number):
     url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}/files"
@@ -59,13 +40,8 @@ def get_pr_files(repo, pr_number):
     return response.json()
 
 def call_mistral_llm(filename, patch):
-    prompt = f"Review the following code changes in {filename}:\n{patch}\nProvide any suggestions or improvements on the basis of security, logic errors."
-
-    inputs = tokenizer(prompt, return_tensors="pt")
-    outputs = model.generate(**inputs, max_new_tokens=750)
-    review_comment = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    return review_comment
+    response = llm_chain.invoke({"filename": filename, "patch": patch})
+    return response
 
 def post_review_comments(repo, pr_number, comments):
     url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}/reviews"
@@ -101,4 +77,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
