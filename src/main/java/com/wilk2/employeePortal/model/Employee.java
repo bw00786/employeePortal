@@ -30,4 +30,6 @@ public class Employee {
     @Column(name = "employeeStartDate")
     private String employeeIDStartDate;
 
+    public void getEmail() {
+    }
 }
