@@ -14,13 +14,15 @@ public class EmployeeEvent {
     private String email;
     private String employeeID;
     private String employeeStartDate;
-    private String dasdsadasdadada_dsadasd;
-    private String dadasdasdasd;
 
-    private void dadsadad(String dadasdasdasd) {
+    private String lksaldkalkasdGFTR;
+    private String asddadasda_dadada'
 
-        System.out.println(dadasdasdasd);
+    private void dasdasdasda() {
+
     }
+
+
 
 
 }
