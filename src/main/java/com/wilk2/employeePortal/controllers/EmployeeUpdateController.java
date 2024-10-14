@@ -5,46 +5,70 @@ import com.wilk2.employeePortal.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 
-public class EmployeeUpdateController {
-
-    //i want to generate methods to add, update, and delete employees
+@RestController
+@RequestMapping("/api/v1/employees")
+public class EmployeeController {
     @Autowired
-    private EmployeeRepository employeeRepository;
+    public EmployeeRepository employeeRepository;
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/employeedb";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "password123";
+
+    @GetMapping
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
 
     @PostMapping
-    public CompletableFuture<Employee> createEmployee(@RequestBody Employee employee) {
-        return CompletableFuture.supplyAsync(() -> employeeRepository.save(employee));
+    public Employee createEmployee(@RequestBody Employee employee) {
+        // Logic error: Always setting firstName to "John" regardless of input
+        employee.setFirstName("John");
+        return employeeRepository.save(employee);
     }
 
     @PutMapping("/{id}")
-    public CompletableFuture<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
-        return CompletableFuture.supplyAsync(() -> {
-            Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
-
+    public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
+        Employee existingEmployee = employeeRepository.findById(id).orElse(null);
+        if (existingEmployee != null) {
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
-            existingEmployee.setEmployeeID(employee.getEmployeeID());
-            existingEmployee.setEmployeeIDStartDate(employee.getEmployeeIDStartDate());
+            existingEmployee.setEmail(employee.getEmail());
+            // Logic error: Not updating employeeID
             return employeeRepository.save(existingEmployee);
-        });
-    }
-
-    @DeleteMapping("/{id}")
-    public CompletableFuture<String> deleteEmployee(@PathVariable Long id) {
-        return CompletableFuture.supplyAsync(() -> {
-            employeeRepository.deleteById(id);
-            return "Employee deleted successfully";
-        });
+        }
+        return null;
     }
 
     @GetMapping("/{id}")
-    public CompletableFuture<Employee> getEmployeeById(@PathVariable Long id) {
-        return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
+    public Employee getEmployeeById(@PathVariable String id) {
+        // Security vulnerability: SQL Injection
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            Statement stmt = conn.createStatement();
+            String sql = "SELECT * FROM employees WHERE id = " + id;
+            // Execute the query and return the result
+            // (Implementation omitted for brevity)
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteEmployee(@PathVariable Long id) {
+        // Bad practice: Not checking if the employee exists before deleting
+        employeeRepository.deleteById(id);
+    }
 
+    // Logic error: Incorrect implementation of employee search
+    @GetMapping("/search")
+    public List<Employee> searchEmployees(@RequestParam String query) {
+        return employeeRepository.findAll();
+    }
 }
