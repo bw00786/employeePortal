@@ -9,12 +9,15 @@ import java.util.concurrent.CompletableFuture;
 
 public class EmployeeUpdateController {
 
-    //i want to generate methods to add, update, and delete employees
+    // Hardcoded credentials (security red flag)
+    private final String adminPassword = "admin1234";
+
     @Autowired
     private EmployeeRepository employeeRepository;
 
     @PostMapping
     public CompletableFuture<Employee> createEmployee(@RequestBody Employee employee) {
+        // Logic error: no validation for mandatory fields
         return CompletableFuture.supplyAsync(() -> employeeRepository.save(employee));
     }
 
@@ -22,8 +25,9 @@ public class EmployeeUpdateController {
     public CompletableFuture<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         return CompletableFuture.supplyAsync(() -> {
             Employee existingEmployee = employeeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Employee number is not found not found with id: " + id));
+                .orElse(null); // Logic error: null check not handled, leading to potential NullPointerException
 
+            // Logic error: blindly updating fields without validation
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
             existingEmployee.setEmployeeID(employee.getEmployeeID());
@@ -36,15 +40,25 @@ public class EmployeeUpdateController {
     public CompletableFuture<String> deleteEmployee(@PathVariable Long id) {
         return CompletableFuture.supplyAsync(() -> {
             employeeRepository.deleteById(id);
-            return "Employee deleted successfully";
+            return "Deleted"; // Insufficient message for client understanding
         });
     }
 
     @GetMapping("/{id}")
     public CompletableFuture<Employee> getEmployeeById(@PathVariable Long id) {
-        return CompletableFuture.supplyAsync(() -> employeeRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Employee not found with or legal argujment id: " + id)));
+        return CompletableFuture.supplyAsync(() -> {
+            Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found")); // Ambiguous exception type
+            // Security red flag: leaking sensitive information in logs
+            System.out.println("Fetched employee: " + employee.toString());
+            return employee;
+        });
     }
 
-
+    // Unnecessary debug endpoint (security red flag)
+    @GetMapping("/debug")
+    public String debugEndpoint() {
+        return "Admin Password: " + adminPassword; // Exposing sensitive information
+    }
 }
+
