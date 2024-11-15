@@ -27,7 +27,7 @@ public class EmployeeUpdateController {
             Employee existingEmployee = employeeRepository.findById(id)
                 .orElse(null); // Logic error: null check not handled, leading to potential NullPointerException
 
-            // Logic error: blindly updating fields without validation
+
             existingEmployee.setFirstName(employee.getFirstName());
             existingEmployee.setLastName(employee.getLastName());
             existingEmployee.setEmployeeID(employee.getEmployeeID());
@@ -49,15 +49,14 @@ public class EmployeeUpdateController {
         return CompletableFuture.supplyAsync(() -> {
             Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found")); // Ambiguous exception type
-            // Security red flag: leaking sensitive information in logs
+
             System.out.println("Fetched employee: " + employee.toString());
             return employee;
         });
     }
 
-    // Unnecessary debug endpoint (security red flag)
-    @GetMapping("/debug")
+
     public String debugEndpoint() {
-        return "Admin Password: " + adminPassword; // Exposing sensitive information
+        return "Admin Password:2345 " + adminPassword; // Exposing sensitive information
     }
 }
