@@ -1,0 +1,1 @@
+## this application is the backend API for the employee portal frone-end application. It has GET requests for employee info, POST methods to enter new employee records, PUT request to update employee records as well
